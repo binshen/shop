@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的奖品</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link href="/res/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="layout">
+    <div class="user">
+        <span class="user_pic"><img src="{{$headimgurl}}" /> </span>
+        <em>{{$nickname}}</em>
+        <ul class="account clear_fix">
+            <li class="a1">
+                <em>{{$data.fund}}</em>
+                <p>账户余额</p>
+            </li>
+            <li class="a2">
+                <em>{{$data.allow.allow_fund}}</em>
+                <p>可提现金额</p>
+            </li>
+            <li class="a3">
+                <em>{{$data.score}}分</em>
+                <p>商品积分</p>
+            </li>
+            <li class="a4">
+                <em>{{$data.allow.allow_score}}分</em>
+                <p>可用积分</p>
+            </li>
+        </ul>
+    </div>
+
+    <ul class="oper_l">
+
+        <li class="clear_fix" url="{{site_url url='product/fund_detail'}}">
+            <div class="col-m-8 col-s-8">账户明细</div>
+            <div class="col-m-4 col-s-4">
+                <em class="i_size_s f_right"><a class="i_arrow"><span class="a"></span><span class="b"></span></a></em>
+            </div>
+        </li>
+
+        <li class="clear_fix" url="{{site_url url='product/score_detail'}}">
+            <div class="col-m-8 col-s-8">积分明细</div>
+            <div class="col-m-4 col-s-4">
+                <em class="i_size_s f_right"><a class="i_arrow"><span class="a"></span><span class="b"></span></a></em>
+            </div>
+        </li>
+
+        <li class="clear_fix" url="{{site_url url='product/withdraw'}}">
+            <div class="col-m-8 col-s-8">提现</div>
+            <div class="col-m-4 col-s-4">
+                <em class="i_size_s f_right"><a class="i_arrow"><span class="a"></span><span class="b"></span></a></em>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="b_bar"><a class="btn btn_white" href="{{site_url url='product/explain'}}">活动说明 >></a></div>
+
+
+</div>
+
+</body>
+<script src="/res/js/jquery-1.11.0.min.js"></script>
+<script>
+    $(".oper_l li").click(function(){
+        location.href = $(this).attr('url')
+    });
+</script>
+</html>

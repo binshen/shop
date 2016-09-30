@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>积分明细</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link href="/res/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="layout">
+
+
+    <div class="prize_bar">总收益<span class="c_yellow">{{$data.all}}分</span> 剩余<span class="c_yellow">{{$data.surplus}}分</span></div>
+<div id="order_list">
+    {{foreach from=$data.res_list item=row}}
+    <ul class="list3 m_l_t">
+        <li class="col-m-6 col-s-6"><p><font color="blue">{{$row.name}}</font> 购买 {{$row.product_name}} <p>￥{{$row.price}} x {{$row.qty}}</p></p><p class="c_gray t_size_s">2016-06-07 11:23:53</p></li>
+        <li class="col-m-6 col-s-6 t_right">
+            <p>
+                {{if $row.score > 0}}
+                <font color="green">+{{$row.score}}</font>
+                {{else}}
+                <font color="red">{{$row.score}}</font>
+                {{/if}}
+            </p>
+                {{if $row.type==2}}
+                    <p class="c_green t_size_s">购买商品抵扣</p>
+                {{/if}}
+
+        </li>
+    </ul>
+    {{/foreach}}
+    <!--<ul class="list3 m_l_t">-->
+        <!--<li class="col-m-6 col-s-6"><p>XXX奖品名称</p><p class="c_gray t_size_s">2016-06-07 11:23:53</p></li>-->
+        <!--<li class="col-m-6 col-s-6 t_right">-->
+            <!--<p>-200</p>-->
+            <!--<p class="c_green t_size_s">兑奖处理中</p>-->
+        <!--</li>-->
+    <!--</ul>-->
+    <!--<ul class="list3 m_l_t">-->
+        <!--<li class="col-m-6 col-s-6"><p>XXX奖品名称</p><p class="c_gray t_size_s">2016-06-07 11:23:53</p></li>-->
+        <!--<li class="col-m-6 col-s-6 t_right"><p>-200</p><p class="c_orange t_size_s">兑换金额已进入微信钱包</p></li>-->
+    <!--</ul>-->
+
+</div>
+    <div class="b_bar">
+        <button class="btn btn_white" id="get_more">加载更多</button>
+        <input type="hidden" name="page" id="page" value="2">
+    </div>
+
+    </div>
+
+</body>
+<script src="/res/js/jquery-1.11.0.min.js"></script>
+<script>
+    $("#get_more").click(function () {
+
+        var page=$("#page").val();
+
+        $.getJSON("{{site_url url='product/score_detail_ajax'}}/"+page,function(data){
+
+            html='';
+            if (data!=1){
+                data.res_list.forEach(function (item) {
+                    html+='<ul class="list3 m_l_t">'
+                    html+='<li class="col-m-6 col-s-6"><p><font color="blue">'+item.name+'</font> 购买 '+ item.product_name +'<p>￥'+ item.price +' x '+ item.qty +'</p></p><p class="c_gray t_size_s">'+item.cdate+'</p></li>'
+                    html+='<li class="col-m-6 col-s-6 t_right">'
+
+                    if(item.score > 0){
+                        html+='<p><font color="green">+'+item.score+'</font></p>'
+                    }else{
+                        html+='<p><font color="red">'+item.score+'</font></p>'
+                    }
+
+                    if(item.type == 2){
+                        html+='<p class="c_green t_size_s">购买商品抵扣</p>'
+                    }
+
+
+                    html += '</li></ul>'
+                })
+                $("#order_list").append(html);
+                pageint=parseInt(page)+1;
+                $("#page").val(pageint);
+            } else{
+                $('.b_bar').html('<button class="btn btn_white">已无更多信息</button>')
+//                $("#get_product").html('已无更多信息')
+            }
+
+        });
+    })
+</script>
+</html>

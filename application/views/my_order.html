@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员中心</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link href="/res/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="layout">
+        <div class="member_nav clear_fix m_l_b"><p class="menu">全部订单</p><a class="phone" href="tel:{{$telPhone}}"><span>客服电话</span><img src="/res/images/i_phone.png" /></a></div>
+        {{if $data}}
+        {{foreach from=$data item=row}}
+        <ul class="list">
+            <li class="col-m-3 col-s-3 m_l_b"><img src="/uploadfiles/products/{{$row.bg_pic}}" class="goods_pic" /></li>
+            <li class="col-m-9 col-s-9">
+                <p class="overflow_h">{{$row.pro_name}}  ￥{{$row.price}} x {{$row.qty}}</p>
+                <p>
+                    <span class="f_right c_gray">
+                        {{if $row.status == 1}}<font color="red">待付款</font>{{/if}}
+                        {{if $row.status == 2}}已付款{{/if}}
+                        {{if $row.status == 3}}<font color="green">已发货</font>{{/if}}
+                        {{if $row.status == -1}}<font color="red">已关闭</font>{{/if}}
+                    </span>实付款： <span class="c_orange">￥{{($row.price * $row.qty - $row.score)|round:2}}</span>
+                </p>
+            </li>
+            <li class="add">
+                {{if $row.status == 1}}<a class="btn_red f_right" href="{{site_url url='product/pay'}}/{{$row.id}}">付款</a>{{/if}}
+                <!--{{if $row.status == 3}}<a class="btn_red f_right" href="{{site_url url='product/confirm_receive'}}/{{$row.id}}">确认收货</a>{{/if}}-->
+                <a class="btn_gray f_right" href="{{site_url url='product/order_info'}}/{{$row.id}}">订单详情</a>
+                {{if $row.status == 1}}<a class="btn_red f_right" href="{{site_url url='product/del_order'}}/{{$row.id}}">删除订单</a>{{/if}}
+            </li>
+        </ul>
+        {{/foreach}}
+        {{else}}
+        <p class="t_center p_l_tb">抱歉~暂无您的订单记录...</p>
+        {{/if}}
+        <div class="b_bar"><a class="btn btn_orange" href="{{site_url url='product/index/26'}}">返回首页</a></div>
+    </div>
+</body>
+</html>

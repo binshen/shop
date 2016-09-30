@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提现申请已提交</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link href="/res/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="layout p_l_t">
+
+
+    <ul class="list">
+        <li class="col-s-3 col-m-3">提现申请</li>
+        <li class="col-s-9 col-m-9 t_right t_size_m">￥{{$fund}}</li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-s-3 col-m-3 c_gray">类型</li>
+        <li class="col-s-9 col-m-9 t_right">提现申请</li>
+        <li class="col-s-3 col-m-3 c_gray">时间</li>
+        <li class="col-s-9 col-m-9 t_right">{{$cdate}}</li>
+        <li class="col-s-3 col-m-3 c_gray">状态</li>
+        <li class="col-s-9 col-m-9 t_right c_green">提现处理中</li>
+    </ul>
+
+
+    <div class="b_bar">
+        <p class="p_lr p_l_b c_gray t_size_s t_center">申请兑奖后，工作人员将核实您的奖品红包，<br/>信息核实无误后的7个工作日内，<br/>兑换红包金额将充值至您的微信“钱包”中，请注意查收。</p>
+
+        <a class="btn btn_orange" href="{{site_url url='product/fund_detail'}}">返回</a></div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>待付款订单</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link href="/res/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="layout p_l_t" id="main">
+    <form action="{{site_url url='product/save_order'}}" method="post">
+        <input type="hidden" name="address_id" {{if $data.address}}value="{{$data.address.id}}"{{/if}}>
+        <input type="hidden" name="pid" value="{{$data.detail.id}}">
+        <input type="hidden" name="price" value="{{$data.detail.de_price}}">
+        <input type="hidden" name="qty" value="{{$qty}}">
+        <input type="hidden" name="pd_id" value="{{$data.detail.pd_id}}">
+
+
+
+    <ul class="list">
+        {{if $data.address}}
+        <li class="col-m-11 col-s-11">
+            <p>{{$data.address.name}} {{$data.address.phone}}</p><p>{{$data.address.f_name}} {{$data.address.g_name}}  {{$data.address.h_name}} {{$data.address.address}}</p>
+        </li>
+        <li class="col-m-1 col-s-1">
+            <p class="lh_xl t_right"><div class="i_size_m f_right m_l_t"><a href="javascript:add_address();" class="i_arrow"><span class="a"></span><span class="b"></span></a></div></p>
+        </li>
+        {{else}}
+        <li class="col-m-9 col-s-9">
+            <p class="lh_m">新增收货地址</p>
+        </li>
+        <li class="col-m-3 col-s-3"><a href="javascript:add_address();" class="i_plus f_right"><span class="a"></span><span></span></a></li>
+        {{/if}}
+    </ul>
+
+    <ul class="list">
+        <li class="col-m-3 col-s-3"><img src="/uploadfiles/products/{{$data.detail.bg_pic}}" class="goods_pic" /></li>
+        <li class="col-m-9 col-s-9">
+            <p class="overflow_h">{{$data.detail.name}}</p>
+            <p class="c_orange"><span class="f_right">x{{$qty}}</span>￥{{$data.detail.de_price}}</p>
+        </li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-m-8 col-s-8">使用积分<input type="number" name="score" value="0" class="gold_in"/>个<p class="c_gray t_size_s">（可用积分:{{$score}}）</p></li>
+        <li class="col-m-4 col-s-4 t_right" id="score_p">-￥00.00</li>
+    </ul>
+    </form>
+
+    <p class="p_lr c_orange" >需支付金额：￥<span class="t_size_m shengyu">{{$data.detail.de_price * $qty}}</span></p>
+    <div class="b_bar"><button class="btn btn_orange" onclick="javascript:save_order();">去支付</button></div>
+</div>
+
+
+
+<div class="layout p_l_t" style="display:none;" id="edit_address">
+
+    <ul class="list">
+        <li class="col-s-2 col-m-2">姓名</li>
+        <li class="col-s-9 col-m-9">
+            <input type="text" id="1" name="name" placeholder="姓名" value="{{if $data.address}}{{$data.address.name}}{{/if}}" class="address_in" />
+        </li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-s-2 col-m-2">电话</li>
+        <li class="col-s-9 col-m-9">
+            <input type="text" id="2" name="phone" placeholder="电话" value="{{if $data.address}}{{$data.address.phone}}{{/if}}" class="address_in">
+        </li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-s-2 col-m-2">地区</li>
+        <li class="col-s-10 col-m-10">
+            <div class="address_select">
+                <select name="province" class="col-m-4 col-s-4 address_s" onchange="change_province(this)">
+                    <option value="">-选择省份-</option>
+                    {{foreach from=$data.province item=row}}
+                    <option value="{{$row.code}}" >{{$row.name}}</option>
+                    {{/foreach}}
+                </select>
+                <select name="city" class="col-m-4 col-s-4 address_s" onchange="change_city(this)">
+                    <option value="">-选择城市-</option>
+                    {{if $data.city}}
+                        {{foreach from=$data.city item=row}}
+                        <option value="{{$row.code}}">{{$row.name}}</option>
+                        {{/foreach}}
+                    {{/if}}
+                </select>
+                <select name="area" class="col-m-4 col-s-4 address_s">
+                    <option value="">-选择地区-</option>
+                    {{if $data.area}}
+                        {{foreach from=$data.area item=row}}
+                        <option value="{{$row.code}}">{{$row.name}}</option>
+                        {{/foreach}}
+                    {{/if}}
+                </select>
+            </div>
+        </li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-s-2 col-m-2">地址</li>
+        <li class="col-s-10 col-m-10">
+            <input type="text" id="4" name="address" value="{{if $data.address}}{{$data.address.address}}{{/if}}" class="address_in" placeholder="地址">
+        </li>
+    </ul>
+
+    <ul class="list">
+        <li class="col-s-2 col-m-2">邮编</li>
+        <li class="col-s-7 col-m-7">
+            <input type="text" id="5" name="zip" value="{{if $data.address}}{{$data.address.zip}}{{/if}}" class="address_in" placeholder="邮编(选填)">
+        </li>
+        <li class="col-s-3 col-m-3 c_gray t_right">（此项选填）</li>
+    </ul>
+    <div class="b_bar"><button class="btn btn_green" onclick="javascript:save_address();">保存</button></div>
+
+</div>
+<a class="btn_all" href="{{site_url url='product/my_order'}}"><span>全部订单</span></a>
+</body>
+<script src="/res/js/jquery-1.11.0.min.js"></script>
+<script>
+    function add_address(){
+        $("#main").hide();
+        $("#edit_address").show();
+    }
+
+    function save_address(){
+        name = $('[name="name"]').val()
+        phone = $('[name="phone"]').val()
+        provice_code = $('[name="province"]').val()
+        city_code = $('[name="city"]').val()
+        area_code = $('[name="area"]').val()
+        address = $('[name="address"]').val()
+        zip = $('[name="zip"]').val()
+
+//        {literal}
+        post_data = {name:name,phone:phone,provice_code:provice_code,city_code:city_code,area_code:area_code,address:address,zip:zip}
+//        {/literal}
+
+        $.post("{{site_url url='product/save_address'}}",post_data,function(data){
+            if(data == 1){
+                location.reload()
+//                $("#edit_address").hide();
+//                $("#main").show();
+            }else{
+                alert('添加失败');
+            }
+        })
+
+    }
+
+    function change_province(obj){
+        if($(obj).val()){
+            $.getJSON("{{site_url url='ajax/getcity'}}/"+$(obj).val(),function(data){
+                city_html = '<option value="">-选择城市-</option>';
+                data.forEach(function (item) {
+                    city_html += '<option value="'+item.code+'">'+item.name+'</option>'
+                })
+
+                $("[name='city']").html(city_html)
+                $('[name="area"]').val('');
+            })
+        }else{
+            $("[name='city']").html('<option value="">-选择城市-</option>')
+            $("[name='area']").html('<option value="">-选择地区-</option>')
+            $('[name="city"]').val('');
+            $('[name="area"]').val('');
+
+        }
+    }
+
+    function change_city(obj){
+        if($(obj).val()){
+            $.getJSON("{{site_url url='ajax/getarea'}}/"+$(obj).val(),function(data){
+                area_html = '<option value="">-选择地区-</option>';
+                data.forEach(function (item) {
+                    area_html += '<option value="'+item.code+'">'+item.name+'</option>'
+                })
+
+                $("[name='area']").html(area_html)
+                $('[name="area"]').val('');
+            })
+        }else{
+            $("[name='area']").html('<option value="">-选择地区-</option>')
+            $('[name="area"]').val('');
+        }
+    }
+
+    {{if $data.address}}
+    $('[name="province"]').val('{{$data.address.provice_code}}')
+    $('[name="city"]').val('{{$data.address.city_code}}')
+    $('[name="area"]').val('{{$data.address.area_code}}')
+    {{/if}}
+
+    function save_order(){
+        if(!$("[name='address_id']").val()){
+            alert('请输入收货地址');
+            return;
+        }
+        $('form').submit();
+    }
+
+    $('.gold_in').blur(function(){
+        score = parseInt($(this).val());
+        if(!score){
+            score = 0
+            $(this).val(0)
+        }
+        total_price = '{{$data.detail.de_price * $qty}}';
+        total_price_float = new Number(total_price)
+        total_price = parseInt(total_price);
+        total_score = '{{$score}}';
+        total_score = parseInt(total_score)
+
+        if(score > total_score || score > total_price){
+            if(total_score > total_price){
+                $(this).val(total_price)
+                score = total_price
+            }else{
+                $(this).val(total_score)
+                score = total_score
+            }
+        }
+        $("#score_p").html('-￥'+score);
+
+        $('.c_orange .shengyu').html((total_price_float - score).toFixed(2));
+    })
+
+    $(".gold_in").trigger("blur");
+
+</script>
+</html>
