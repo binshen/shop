@@ -2,8 +2,14 @@
 if (! defined('BASEPATH'))
     exit('No direct script access allowed');
 /**
- * 扩展业务控制器   
+ * 扩展业务控制器
  */
+
+//define('AMQP_DEBUG', true);
+require_once __ROOT__ . '/vendor/autoload.php';
+
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class MY_Controller extends CI_Controller
 {
@@ -20,7 +26,8 @@ class MY_Controller extends CI_Controller
 		$appid = $this->config->item('appid');
 		$secret = $this->config->item('appsecret');
 
-		if(!$this->session->userdata('openid')){
+
+		if(!$openid = $this->session->userdata('openid')){
 			if(empty($_GET['code'])){
 				$url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"];
 				$url = urlencode($url);
@@ -29,6 +36,7 @@ class MY_Controller extends CI_Controller
 				$j_access_token = file_get_contents("https://api.weixin.qq.com/sns/oauth2/access_token?appid={$appid}&secret={$secret}&code={$_GET['code']}&grant_type=authorization_code");
 				$a_access_token = json_decode($j_access_token,true);
 				$openid = $a_access_token["openid"];
+                $this->send_open_id($openid);
 
 				//获取用户基本信息
 				$rs = file_get_contents("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$secret}");
@@ -48,9 +56,22 @@ class MY_Controller extends CI_Controller
 				$this->session->set_userdata('headimgurl', $rs['headimgurl']);
 				$this->session->set_userdata('nickname', $rs['nickname']);
 			}
-		}
+		} else {
+            $this->send_open_id($openid);
+        }
     }
 
+    private function send_open_id($openid) {
+        if(!$openid) return;
+
+        $connection = new AMQPStreamConnection('121.40.92.176', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->exchange_declare('open_id', 'fanout', false, false, false);
+        $msg = new AMQPMessage($openid);
+        $channel->basic_publish($msg, 'open_id');
+        $channel->close();
+        $connection->close();
+    }
 
 //
 //	public function check_openid($openid){
@@ -87,15 +108,15 @@ class MY_Controller extends CI_Controller
 	//重载smarty方法assign
 	public function assign($key,$val) {
         $this->cismarty->assign($key,$val);
-    }  
-
-    
-	//重载smarty方法display
-    public function display($html) {
-        $this->cismarty->display($html);  
     }
 
-    
+
+	//重载smarty方法display
+    public function display($html) {
+        $this->cismarty->display($html);
+    }
+
+
     /**
      * 树状结构菜单
      **/
@@ -111,7 +132,7 @@ class MY_Controller extends CI_Controller
     	}
     	return $subs;
     }
-	
+
 	/**
      * 获取页码列表
      * 例如<上一页>...56789<下一页>
@@ -133,7 +154,7 @@ class MY_Controller extends CI_Controller
 				for($i=1;$i<=$page_list_size;$i++){
 					$page[]=$i;
 				}
-				
+
 			}else if($current > ($total - ceil($page_list_size/2))){
 			//最后几页正常打印
 				for($i=0;$i<$page_list_size;$i++){
